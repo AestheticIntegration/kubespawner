@@ -765,6 +765,19 @@ class KubeSpawner(Spawner):
         """
     )
 
+    extra_env = List(
+        None,
+        config=True,
+        help="""
+        Extra environment variable specs to be merged with the spawner's
+        environment dictionary and dynamic hub related environment vars.
+
+        These should be in the form of kubernetes environment specs, i.e. objects with a 'name' field:
+
+        {'name': 'HOST_IP_ADDRESS', valueFrom: {'fieldRef': {'fieldPath': 'status.hostIP'}}}
+        """
+    )
+
     extra_container_config = Dict(
         None,
         config=True,
@@ -1192,6 +1205,7 @@ class KubeSpawner(Spawner):
             supplemental_gids=supplemental_gids,
             run_privileged=self.privileged,
             env=self.get_env(),
+            extraEnv=self.extra_env,
             volumes=self._expand_all(self.volumes),
             volume_mounts=self._expand_all(self.volume_mounts),
             working_dir=self.working_dir,

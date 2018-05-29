@@ -35,6 +35,7 @@ def make_pod(
     supplemental_gids=None,
     run_privileged=False,
     env={},
+    extraEnv=[],
     working_dir=None,
     volumes=[],
     volume_mounts=[],
@@ -103,6 +104,9 @@ def make_pod(
         Whether the container should be run in privileged mode.
     env:
         Dictionary of environment variables.
+    extraEnv:
+        List of dictionaries containing kubernetes environment variable specs,
+        to be merged with the static env dictionary and dynamic env vars.
     volumes:
         List of dictionaries containing the volumes of various types this pod
         will be using. See k8s documentation about volumes on how to specify
@@ -184,7 +188,7 @@ def make_pod(
         image=image_spec,
         working_dir=working_dir,
         ports=[V1ContainerPort(name='notebook-port', container_port=port)],
-        env=[V1EnvVar(k, v) for k, v in env.items()],
+        env=[V1EnvVar(k, v) for k, v in env.items()] + extraEnv,
         args=cmd,
         image_pull_policy=image_pull_policy,
         lifecycle=lifecycle_hooks,
